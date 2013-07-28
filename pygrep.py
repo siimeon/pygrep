@@ -9,7 +9,7 @@ Advanced options:
 	-c 	characters after separator 
 '''
 import sys
-version = 0.1
+version = 0.11
 
 def pygrep(fileSource, separator):
 	fileAccess = open(fileSource, 'r')
@@ -20,27 +20,39 @@ def pygrep(fileSource, separator):
 			return i.split(separator).pop()
 	return ''
 
-def advanced_pygrep(fileSource, separator, allFile, fullLines, charsCount):
+def advanced_pygrep(fileSource, separator, allFile, fullLines, charsCount, hit):
 	fileAccess = open(fileSource, 'r')
 	lines = fileAccess.read().split('\n')
 	fileAccess.close()
-	retValue = ''
+	retValue = []
 	for i in lines:
 		if separator in i:
-			star = ''
-			end = ''
-			if retValue != '':
-				star = '\n'
+			value = ''
 			if fullLines == True:
-				end = i
+				value = i
 			else:
-				end = i.split(separator).pop()
+				value = i.split(separator).pop()
 				if charsCount != 0:
-					end = end[:charsCount]
-			retValue += star + end
+					value = value.strip()[:charsCount]
+			retValue.append(value)
 			if allFile == False:
-				return retValue
-	return retValue
+				return retValue.pop()
+	strvalue = ''
+	if hit == -1:
+		for j in range(len(retValue)):
+			if j != 0:
+				strvalue += '\n'
+			strvalue += retValue[j]
+	else:
+		try:
+			if hit == 0:
+				return retValue.pop()
+			else:
+				return retValue[hit-1]
+		except:
+			print 'Error'
+			sys.exit()
+	return strvalue
 
 
 if __name__ == '__main__':
@@ -55,6 +67,7 @@ if __name__ == '__main__':
 		print 'Advanced options:'
 		print '-f Return full lines'
 		print '-c[number] Return character count after separator'
+		print '-h[number] Choose witch match will be returned. If 0 last is returned'
 		print '-a Return all lines'
 		print '   (Defaultly first line with separator is returned)'
 	if len(sys.argv) == 2 and sys.argv[1] in ['-v', 'version', '-version']:
@@ -65,6 +78,7 @@ if __name__ == '__main__':
 		fileSource = sys.argv[1]
 		separator = sys.argv[2]
 		charsCount = 0
+		hit = -1
 		allFile = False
 		fullLines = False
 		for i in range(len(sys.argv)-3):
@@ -75,4 +89,8 @@ if __name__ == '__main__':
 			if sys.argv[i+3].startswith('-c'):
 				tmp = sys.argv[i+3]
 				charsCount = int(tmp.split('-c').pop())
-		print advanced_pygrep(fileSource, separator, allFile, fullLines, charsCount)
+			if sys.argv[i+3].startswith('-h'):
+				tmp = sys.argv[i+3]
+				hit = int(tmp.split('-h').pop())
+				allFile = True
+		print advanced_pygrep(fileSource, separator, allFile, fullLines, charsCount, hit)
