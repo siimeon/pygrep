@@ -5,8 +5,13 @@ Python grep tool
 
 Python tool for searching character sequence
 
-Basic usage: python pygrep.py fileSource separator
-Advanced usage: python pygrep.py fileSource separator options
+Basic usage:
+
+	python pygrep.py [fileSource] [separator]
+	
+Advanced usage: 
+
+	python pygrep.py [fileSource] [separator options]
 
 Advanced options:
 
